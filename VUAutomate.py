@@ -8,6 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 import time
 import random
+import config 
 
 class VUautomate:
     totalquiz = 0
@@ -33,6 +34,7 @@ class VUautomate:
         
     def login(self):
         url = 'https://vulms.vu.edu.pk/'
+        # url = 'https://www.google.com'
         driver.get(url)
         try:
             user = WebDriverWait(driver, 10).until(
@@ -41,23 +43,24 @@ class VUautomate:
         except:
             print('page failed to load ')
             exit()
-        user.send_keys(STUDENT_ID) 
+        user.send_keys(config.STUDENT_ID) 
         for _ in range(2):
             time.sleep(1)
             password = driver.find_element(by=By.NAME,value='txtPassword')
             submit_button = driver.find_element(by=By.NAME, value='ibtnLogin')
-            password.send_keys(STUDENT_PASSWORD) 
+            password.send_keys(config.STUDENT_PASSWORD) 
             submit_button.click()
             time.sleep(5)
             if VUautomate.is_alert_present(driver):
                 print("Alert is present!")
                 alert = driver.switch_to.alert
                 alert.accept()
-            else:
-                print("No alert found.")
+            # else:
+                # print("No alert found.")
             time.sleep(2)
             if driver.current_url!=url:
                 break
+            print("Login Failed")
         if driver.current_url==url:
             print('stupid website')
             exit()
@@ -201,10 +204,11 @@ class VUautomate:
 
 
 #
-service = Service(r'PATH\TO\chromedriver.exe')# <-CHANGE CHROME DRIVERS LOCATION In Between the Quotes
-STUDENT_ID = '' # <-Enter Student ID HERE In Between the Quotes
-STUDENT_PASSWORD = '' # <-Enter PASSWORD HERE In Between the Quotes
-select_subject_index ='span#MainContent_gvCourseList_lblCurrentLessonNo_0' # <-CHANGE THE INDEX OF THE SUBJECT YOU WANT TO COMPLETE 0 is first subject 1 is second and so on
+service = Service(config.PATH_TO_CHROME_DRIVER)
+
+subject_index ='span#MainContent_gvCourseList_lblCurrentLessonNo_' 
+selected_subject_index = subject_index+config.COURSE_INDEX
+
 #
 options = Options()
 options.add_argument('--log-level=1')
@@ -223,7 +227,7 @@ if "survey.vu.edu.pk" in surveycheck:
 VUautomateor.subnamehyperlnk()
 ###
 # select lecture
-element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'span#MainContent_gvCourseList_lblCurrentLessonNo_0')))
+element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,selected_subject_index)))
 element.click()
 ###
 while True:
