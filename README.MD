@@ -20,6 +20,8 @@ I am Trying to make a project to automate Specific task in VU. For Now you can o
 Update the VUAutomate.py file with your VU LMS credentials and the path to your ChromeDriver.
 Run the script:
 
+Video : https://youtu.be/uHuMUtLHY-A
+
 ## TODO LIST:
 1. ASSIMENT ALERTS 
 2. AUTOMATE WEEKLY QUIZ
