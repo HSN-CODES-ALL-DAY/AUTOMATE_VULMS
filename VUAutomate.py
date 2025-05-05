@@ -8,7 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 import time
 import random
-import config 
+import config
 
 class VUautomate:
     totalquiz = 0
@@ -135,7 +135,7 @@ class VUautomate:
             if 'Not' not in elements[self.task].text:
                 print('done')
                 break
-            driver.switch_to.frame(frame)
+            driver.switch_to.frame(0)
             #EXTRACT TEXT FROM  QUIZ TO TEXT
             element = driver.find_element(By.XPATH, "//div[@id='divnoselect']")
             question_text = element.find_elements(By.TAG_NAME,'p')
