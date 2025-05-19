@@ -8,7 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 import time
 import random
-import config
+import config_personal
 
 class VUautomate:
     totalquiz = 0
@@ -43,12 +43,12 @@ class VUautomate:
         except:
             print('page failed to load ')
             exit()
-        user.send_keys(config.STUDENT_ID) 
+        user.send_keys(config_personal.STUDENT_ID) 
         for _ in range(2):
             time.sleep(1)
             password = driver.find_element(by=By.NAME,value='txtPassword')
             submit_button = driver.find_element(by=By.NAME, value='ibtnLogin')
-            password.send_keys(config.STUDENT_PASSWORD) 
+            password.send_keys(config_personal.STUDENT_PASSWORD) 
             submit_button.click()
             time.sleep(5)
             if VUautomate.is_alert_present(driver):
@@ -118,13 +118,14 @@ class VUautomate:
         time.sleep(2)
 
         frames = driver.find_elements(By.TAG_NAME, 'iframe')
-        for frame in enumerate(frames):
+
+        for frame in frames:
             try:
                 driver.switch_to.frame(frame)
-                element = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.NAME, 'btnStartQuiz')))
+                element = driver.find_element(By.ID, "btnStartQuiz")
                 element.click()
-                break  
-            except:
+                break  # Element found and clicked
+            except Exception as e:
                 driver.switch_to.default_content()
                 continue
 
@@ -135,9 +136,10 @@ class VUautomate:
             if 'Not' not in elements[self.task].text:
                 print('done')
                 break
-            driver.switch_to.frame(0)
+            driver.switch_to.frame(frame)
             #EXTRACT TEXT FROM  QUIZ TO TEXT
-            element = driver.find_element(By.XPATH, "//div[@id='divnoselect']")
+            
+            element = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, f'divnoselect'))) # "//div[@id='divnoselect']" //div[@class='modal-body']")
             question_text = element.find_elements(By.TAG_NAME,'p')
             quiz_text = driver.find_elements(By.XPATH, "//*[contains(@id, 'lblExpression')]")
             combined_text = "\n".join(q_text.text for q_text in question_text)
@@ -183,6 +185,7 @@ class VUautomate:
                     i.click()
                     view = driver.find_elements(By.CSS_SELECTOR,"span[id^='lblVCompletionStatus']")
                     if 'Not' not in view[vindexer].text:
+                        vindexer+=1
                         break
                     time.sleep(15)
                 
@@ -204,10 +207,10 @@ class VUautomate:
 
 
 #
-service = Service(config.PATH_TO_CHROME_DRIVER)
+service = Service(config_personal.PATH_TO_CHROME_DRIVER)
 
 subject_index ='span#MainContent_gvCourseList_lblCurrentLessonNo_' 
-selected_subject_index = subject_index+config.COURSE_INDEX
+selected_subject_index = subject_index+config_personal.COURSE_INDEX
 
 #
 options = Options()
